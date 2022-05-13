@@ -1,0 +1,289 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+    "title": "Message Board API",
+    "version": "1.0"
+    },
+    "paths": {
+        "/users":{
+            "description":"All the users",
+            "post":{
+                "summary":"Create a user",
+                "description":"An HTTP POST to this endpoint will add a new user to the system",
+                "requestBody": {
+                    "description": "User data",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/user"
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "201":{
+                        "description": "User created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/user"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "403":{
+                        "description": "User already exists"
+                    },
+                    "429": { 
+                        "$ref": "#/components/responses/429TooManyRequests" 
+                    } 
+                }
+            }
+            
+        },
+        "/messages": {
+            "description": "All the messages",
+            "get": {
+                "summary": "List all the messages",
+                "description": "List all the messages in the order they were posted (newest at top).",
+                "responses": {
+                    "200": {
+                        "description": "All the messages",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/message"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "429": { 
+                        "$ref": "#/components/responses/429TooManyRequests" 
+                    }      
+                }
+            },
+            "post": {
+                "security": [
+                    { "bearerAuth": [] }
+                ],
+                "summary": "Add a new message to messages",
+                "description": "Enters the user message into the messages stored on the server",
+                "requestBody": {
+                    "description": "Message's data",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/message"
+                            }
+                        }
+                    }
+                },                   
+                "responses": {
+                    "200": {
+                        "description": "Added new message"
+                    },
+                    "201":{
+                        "description": "Added new message",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                "$ref": "#/components/schemas/message"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401":{
+                        "description":"Unauthorized"
+                    },
+                    "429": { 
+                        "$ref": "#/components/responses/429TooManyRequests" 
+                    }                       
+                }
+            }
+        },
+        "/login":{
+            "description":"Log in to an account",
+            "post":{
+                "summary":"Log in to an account",
+                "description":"An HTTP POST to this endpoint will log a user into the system",
+                "requestBody": {
+                    "description": "User data",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password"
+                                ],
+                                "properties":{
+                                    "username":{
+                                        "type":"string",
+                                        "maxLength":50,
+                                        "description":"Username with one or more capital letters, one or more special characters, and one or more numbers",
+                                        "example":"Scott_123"
+                                    },
+                                    "password":{
+                                        "type":"string",
+                                        "maxLength":64,
+                                        "description":"Password with one or more capital letters, one or more special characters, and one or more numbers",
+                                        "example":"Password_123"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "200": {
+                        "description": "Successfully logged in.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "JWT Token",
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401":{
+                        "description": "Username and/or Password do not match"
+                    },
+                    "429": { 
+                        "$ref": "#/components/responses/429TooManyRequests" 
+                    } 
+                }
+            }
+            
+        },
+        "/messages/:messageId":{
+            "description":"Update user message on server",
+            "patch":{
+                "security": [
+                    { "bearerAuth": [] }
+                ],
+                "summary": "Update user message",
+                "description": "Updates the message in the database that is associated with the currently logged in user",
+                "requestBody": {
+                    "description": "Message's data",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/message"
+                            }
+                        }
+                    }
+                }    
+            },
+            "responses": {
+                "204": {
+                    "description": "No Content"
+                },
+                "400": {
+                    "description": "Bad Request"
+                },
+                "401":{
+                    "description":"Unauthorized"
+                },
+                "404":{
+                    "description":"Not Found"
+                },
+                "429": { 
+                    "$ref": "#/components/responses/429TooManyRequests" 
+                }                       
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+            }
+        }, 
+        "schemas": {
+            "message": {
+                "type": "object",
+                "description": "A message",
+                "required": [
+                    "name",
+                    "msgText"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 15,
+                        "pattern": "[A-Za-z]",
+                        "description": "Name of User who created the message.",
+                        "example": "Fred"
+                    },
+                    "msgText": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 30,
+                        "description": "A message.",
+                        "example": "Hello World!"
+                    }
+                }
+            },
+            "user":{
+                "type":"object",
+                "required": [
+                    "email",
+                    "username",
+                    "password"
+                ],
+                "properties":{
+                    "email":{
+                        "type": "string",
+                        "format": "email",
+                        "description": "Email address of user",
+                        "example": "Throckmorton68@live.com"
+                    },
+                    "username":{
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 30,
+                        "description": "Name of user",
+                        "example": "Throckmorton"
+                    },
+                    "password":{
+                        "type": "string",
+                        "minLength": 8,
+                        "maxLength": 64,
+                        "format": "password",
+                        "description": "Password of user",
+                        "example": "p@ssword_123"
+                    }
+                }
+            }
+        },
+        "responses": { 
+            "429TooManyRequests": { 
+              "description": "Too many requests." 
+            } 
+        }
+    }
+}
+   

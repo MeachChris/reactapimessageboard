@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <metacharset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title> ICS221 Lab 2 Scott Sinclair</title>
+        <script crossorigin 
+            src="https://unpkg.com/react@17/umd/react.development.js"></script>
+        <script crossorigin
+            src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+        <script crossorigin
+            src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <script crossorigin
+            src="https://unpkg.com/react-is@17/umd/react-is.development.js"></script>
+        <script crossorigin
+            src="https://unpkg.com/styled-components/dist/styled-components.min.js"></script>
+        <!-- React Bootstrap CSS Component Library -->
+        <script crossorigin 
+            src="https://unpkg.com/react-bootstrap@next/dist/react-bootstrap.min.js"></script>
+        <!-- CSS Stylesheet used by React Bootstrap (the vanilla bootstrap) -->
+        <link rel="stylesheet" 
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" 
+            integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" 
+            crossorigin="anonymous" 
+        />
+    </head>
+    <body>
+        <div id="content"></div>
+    </body>
+
+    <script type="text/babel">
+        
+        
+        
+       
+
+        
+
+        
+
+        
+ 
+    const App=()=>{
+        const { Container, Col, Row } = ReactBootstrap;
+        return(
+            <>
+            <Container >
+                <Row className="justify-content-center">
+                    <Col lg={8}>
+                        <Header  />
+                    </Col>
+                </Row>
+                <Row className="justify-content-center">
+                    <Col lg={8}>
+                        <MessageTable />
+                    </Col>
+                </Row>
+                <Row className="justify-content-center">
+                    <Col lg={8}>
+                        <Footer />
+                    </Col>
+                </Row>
+            </Container>
+            </>
+        );
+    }
+        
+
+
+        ReactDOM.render(
+            <App />
+            , document.getElementById('content')
+        );
+    </script>
+
+</html>
